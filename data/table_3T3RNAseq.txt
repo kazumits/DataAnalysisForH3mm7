@@ -1,0 +1,13 @@
+sample	cond	time	
+X3T3.WT.noinf	WT	noinf
+X3T3.WT.infect	WT	infect
+X3T3.WT.inf24	WT	inf24
+X3T3.WT.inf48	WT	inf48
+X3T3.H3v3.noinf	H3v3	noinf
+X3T3.H3v3.infect	H3v3	infect
+X3T3.H3v3.inf24	H3v3	inf24
+X3T3.H3v3.inf48	H3v3	inf48
+X3T3.H3v7.noinf	H3v7	noinf
+X3T3.H3v7.infect	H3v7	infect
+X3T3.H3v7.inf24	H3v7	inf24
+X3T3.H3v7.inf48	H3v7	inf48

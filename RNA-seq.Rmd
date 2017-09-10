@@ -1,0 +1,193 @@
+---
+title: "RNA-seq data analysis for H3mm7"
+output:
+  html_notebook:
+    theme: united
+    toc: yes
+  html_document: default
+  pdf_document:
+    toc: yes
+always_allow_html: yes
+---
+
+Prerequisites
+-------------
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(clusterProfiler)
+library(org.Mm.eg.db)
+library(DT)
+library(knitr)
+library(data.table)
+library(dtplyr)
+library(dplyr)
+source("RScript/DESeq2Workflow.R")
+```
+
+### Helper functions
+
+```{r helperFunctions}
+modTbl <- function(x,...) x %>%
+  mutate(log10padj=log10(padj)) %>%
+  dplyr::select(cluster,1:3,log2FC=log2FoldChange,log10padj) %>%
+  inner_join(e2g,.,by="ens_gene") %>% arrange(log10padj)
+
+showDT <- function(x,...) x %>% modTbl %>% 
+  datatable(filter="top",rownames=FALSE,...) %>%
+  formatRound(4:9,3)
+
+tlab <- function(res,alpha=0.1,thresh=0)
+  c("LT","NS","GT")[with(res,
+    (padj < alpha & baseMean > thresh)*sign(log2FoldChange))+2
+  ]
+
+degLabs <- function(dds,contrast,alpha=0.1,thresh=100)
+  dds %>% results(contrast=contrast) %>% tlab(alpha,thresh)
+```
+
+### Load bioMart annotation
+
+```{r biomart, cache=TRUE}
+library(biomaRt)
+ensembl <- useMart("ENSEMBL_MART_ENSEMBL",host="asia.ensembl.org")
+mart <- useDataset("mmusculus_gene_ensembl",mart=ensembl)
+e2g <- getBM(attributes = c("ensembl_gene_id","external_gene_name","gene_biotype"), mart = mart)
+e2g <- dplyr::rename(e2g, ens_gene = ensembl_gene_id, ext_gene = external_gene_name, biotype = gene_biotype)
+```
+
+
+H3mm7KO in C2C12
+----------------
+
+```{r fit_H3mm7KO, cache=TRUE}
+defko <- getdef("data/table_C2C12RNAseq.txt")
+ddsko <- getdds("data/countGENCODEvM9_C2C12RNAseq.edit.txt",defko,~time+cond)
+rldko <- rlog(ddsko,blind=FALSE)
+knitr::kable(colData(ddsko))
+```
+
+```{r results_H3mm7KO}
+set.seed(333)
+resko <- results(ddsko,contrast=c("cond","KO","WT"))
+tblko <- timecoursePlots(resko,rldko,k=6,showsd=TRUE)
+p <- ggplot(tblko,aes(cluster,baseMean,fill=cluster)) + 
+  geom_violin() + scale_y_log10() + theme_bw() +
+  scale_fill_brewer(palette="Set2")
+print(p)
+B <- with(tblko %>% modTbl, table(biotype,cluster))
+op <- par(mai=c(.5,2.2,.5,.5))
+barplot(t(B[order(-rowSums(B))[1:6],]),beside=TRUE,col=brewer.pal(6,"Set2"),legend.text = colnames(B),las=1,horiz = TRUE)
+par(op)
+showDT(tblko)
+```
+
+```{r resultsH3mm7Sel}
+set.seed(333)
+tblks <- timecoursePlots(resko[resko$baseMean>100,],rldko,k=6)
+showDT(tblks)
+```
+
+
+#### GSEA
+
+```{r GSEA, cache=TRUE}
+gsks <- bitr(tblks$ens_gene,fromType = "ENSEMBL",toType = "ENTREZID",org.Mm.eg.db) %>%
+  dplyr::rename(ens_gene=ENSEMBL) %>% filter(!duplicated(ens_gene)) %>%
+  inner_join(tblks %>% dplyr::select(ens_gene,cluster,log2FoldChange),by="ens_gene") %>%
+  arrange(-log2FoldChange)
+
+v <- gsks$log2FoldChange
+names(v) <- gsks$ENTREZID
+gse <- gseGO(v,OrgDb = org.Mm.eg.db,pvalueCutoff = 0.05, nPerm=10000)
+gse@result[,-11] %>% arrange(NES) %>% kable 
+```
+
+
+
+NIH3T3 H3vOE
+------------
+
+```{r fit_NIH3T3, cache=TRUE}
+defn <- getdef("data/table_3T3RNAseq.txt")
+ddsn <- getdds("data/countGENCODEvM9_3T3RNAseq.edit.txt",defn,~time+cond)
+rldn <- rlog(ddsn,blind=FALSE)
+knitr::kable(colData(ddsn))
+```
+
+```{r results_NIH3T3}
+set.seed(333)
+resn <- results(ddsn,contrast=c("cond","H3v7","WT"))
+tbln <- timecoursePlots(resn,rldn,k=6,showsd=TRUE)
+p <- ggplot(tbln,aes(cluster,baseMean,fill=cluster)) + 
+  geom_violin() + scale_y_log10() + theme_bw() +
+  scale_fill_brewer(palette="Set2")
+print(p)
+B <- with(tbln %>% modTbl, table(biotype,cluster))
+pal <- brewer.pal(6,"Set1")
+op <- par(mai=c(.5,2.2,.5,.5))
+barplot(t(B[order(-rowSums(B))[1:6],]),beside=TRUE,col=pal,legend.text = colnames(B),las=1,horiz = TRUE)
+par(op)
+showDT(tbln)
+```
+
+```{r resultsNIH3T3Sel}
+set.seed(333)
+tblns <- timecoursePlots(resn[resn$baseMean>100,],rldn,k=6)
+showDT(tblns)
+```
+
+#### GSEA
+
+```{r GSEA_NIH3T3, cache=TRUE}
+gsksn <- bitr(tblns$ens_gene,fromType = "ENSEMBL",toType = "ENTREZID",org.Mm.eg.db) %>%
+  dplyr::rename(ens_gene=ENSEMBL) %>% filter(!duplicated(ens_gene)) %>%
+  inner_join(tblns %>% dplyr::select(ens_gene,cluster,log2FoldChange),by="ens_gene") %>%
+  arrange(-log2FoldChange)
+
+v <- with(gsksn,setNames(log2FoldChange,ens_gene)) %>% sort(decreasing=TRUE)
+gsen <- gseGO(v,ont = "BP",OrgDb = org.Mm.eg.db,pvalueCutoff = 0.25,nPerm=10000,keytype = "ENSEMBL")
+kable(gsen@result[,-c(1,11)] %>% arrange(desc(enrichmentScore)))
+```
+
+
+si-mH2A.1 in C2C12
+--------------------------
+
+* http://www.sciencedirect.com/science/article/pii/S2211124716000036
+* https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=SRP067391
+
+```{r fit_siMacroH2A1, cache=TRUE}
+defm <- getdef("data/table_mH2A1-2i.txt")
+ddsm <- getdds("data/countGENCODEvM9_C2C12-mH2A1-2i_RNAseq.edit.txt",defm,~time*cond,~time+cond)
+rldm <- rlog(ddsm,blind=FALSE)
+knitr::kable(colData(ddsm))
+```
+
+```{r results_siMacroH2A1}
+resm <- results(ddsm,name="timeMT.condmH2A1.2i")
+tblm <- timecoursePlots(resm,rldm,k=4)
+showDT(tblm)
+```
+
+BMAL1-KO in hip cartilage
+-------------------------
+
+* https://www.jci.org/articles/view/82755
+* https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=ERP009958
+
+```{r fit_BMAL1KO, cache=TRUE}
+defb <- getdef("data/table_BMAL1KO.txt")
+defb$cond <- factor(defb$cond,c("WT","KO"))
+defb$time <- factor(defb$time,c("5AM","9AM","5PM","9PM"))
+ddsb <- getdds("data/countGENCODEvM9_cartilage_BMAL1-KO_RNAseq.edit.txt",defb,~time*cond,~time+cond)
+rldb <- rlog(ddsb,blind=FALSE)
+knitr::kable(colData(ddsb))
+```
+
+```{r results_BMAL1KO}
+resb <- results(ddsb,name="time9PM.condKO")
+# same alpha as their paper
+tblb <- timecoursePlots(resb,rldb,k=4,alpha=0.05)
+showDT(tblb %>% filter(abs(log2FoldChange) > 1)) 
+```
+

@@ -1,0 +1,269 @@
+---
+title: "ChIP/ATAC-seq analysis for H3mm7"
+output:
+  html_notebook: default
+  html_document: default
+  pdf_document:
+    latex_engine: xelatex
+always_allow_html: yes
+---
+
+```{r setup}
+source("RScript/geomNorm.R")
+source("RScript/glmodel.R")
+source("RScript/DESeq2Workflow.R")
+source("RScript/functionalToys.R")
+
+library(knitr)
+library(DT)
+library(biomaRt)
+library(data.table)
+library(dtplyr)
+library(dplyr)
+```
+
+```{r helperFunctions}
+firstzero <- function(x) which(sort(x)>0)[1]
+
+makelabel <- function(x,sep="-")
+  t %.% simplify2array %.% papp(strsplit,sep) %.% as.character %$% x
+
+modTbl <- function(x,...) x %>%
+  mutate(log10padj=log10(padj)) %>%
+  dplyr::select(cluster,1:3,log2FC=log2FoldChange,log10padj) %>%
+  inner_join(e2g,.,by="ens_gene") %>% arrange(log10padj)
+
+showDT <- function(x,...) x %>% modTbl %>% 
+  datatable(filter="top",rownames=FALSE,...) %>%
+  formatRound(4:9,3)
+
+labelQ <- function(x,n=20) {
+  qt <- seq(0,1,length=n+1)
+  cut(x,
+      include.lowest = TRUE,
+      breaks = quantile(x,qt),
+      labels = round(qt*100)[-1]
+  )
+}
+```
+
+```{r load_EnsGene, cache=TRUE}
+ensembl <- useMart("ENSEMBL_MART_ENSEMBL",host="asia.ensembl.org")
+mart <- useDataset("mmusculus_gene_ensembl",mart=ensembl)
+e2g <- getBM(attributes = c("ensembl_gene_id","external_gene_name","gene_biotype"), mart = mart)
+e2g <- dplyr::rename(e2g, ens_gene = ensembl_gene_id, ext_gene = external_gene_name, biotype = gene_biotype)
+coding <- e2g$ens_gene[e2g$biotype == "protein_coding"]
+```
+
+```{r loadATACCount, cache=TRUE}
+atac<-fread('data/countSubNuc20-150_GENCODEvM9_ATAC-NIH3T3_exonUp2k.edit.txt',skip=1,showProgress = FALSE)
+mat <- as.matrix(atac[,-(1:6),with=FALSE])
+colnames(mat) <- sub("lot12","lot2",colnames(mat))
+rownames(mat) <- sub('\\..*$','',atac$Geneid)
+mat <- mat[rowSums(mat)>0,]
+tbN <- data.frame(t(simplify2array(strsplit(colnames(mat),'-')))[,-1])
+colnames(tbN) <- c('clone','time','lot')
+ddsN <- DESeqDataSetFromMatrix(mat,tbN,~time+clone)
+modelN <- DESeq(ddsN,fitType = 'local')
+rlN <- rlog(modelN,blind=FALSE)
+resN7 <- results(modelN,contrast = c('clone','H37','WT'))
+resN3 <- results(modelN,contrast = c('clone','H33','WT'))
+resN73 <- results(modelN,contrast = c('clone','H37','H33'))
+tblN <- data.table(ens_gene=rownames(resN7),tbl_dt(resN7)) %>%
+  filter(padj<0.1) %>% right_join(tbl_dt(e2g),.,by="ens_gene")
+summary(resN7)
+```
+
+
+```{r}
+lN <- assay(rlN)
+mN <- data.frame(t(simplify2array(strsplit(sub('3T3-','',colnames(lN)),'-'))))
+colnames(mN) <- c("Cell","Time","Lot")
+mN$Time <- factor(mN$Time,c('noinf','inf','D48'))
+gD <- na.omit(with(resN7,rownames(resN7)[padj < 0.1 & log2FoldChange < 0]))
+mN$Accessibility <- colMeans(lN[gD,])
+ggplot(mN,aes(Time,Accessibility,group=Cell:Lot,colour=Cell,lty=Lot,shape=Cell)) +
+  geom_point(size=3) + geom_line() + theme_bw() +
+  scale_color_brewer(palette="Set1")
+gU <- na.omit(with(resN7,rownames(resN7)[padj < 0.1 & log2FoldChange > 0]))
+mN$Accessibility <- colMeans(lN[gU,])
+ggplot(mN,aes(Time,Accessibility,group=Cell:Lot,colour=Cell,lty=Lot,shape=Cell)) +
+  geom_point(size=3) + geom_line() + theme_bw() +
+  scale_color_brewer(palette="Set1")
+```
+
+
+```{r loadChIPseq, cache=TRUE}
+chipmat <- fread('data/countGENCODEvM9_3T3ChIPseq.edit.txt',skip=1,showProgress=FALSE)
+chipseq <- chipmat %>% dplyr::select(-(1:6)) %>% as.matrix
+colnames(chipseq) <- sub('GFP-','-',sub('^H3','',sub('^3T3-','',colnames(chipseq))))
+rownames(chipseq) <- sub('\\..*$','',chipmat$Geneid)
+chipseq <- chipseq[apply(chipseq,1,sum) > 0,]
+chipseq <- gscale(as.matrix(chipseq)+1)
+chipnames <- colnames(chipseq)[grep("input",colnames(chipseq),invert=TRUE)]
+signal <- log2(chipseq[,chipnames]+1) - log2(chipseq[,sub('-[^-]*$','-input',chipnames)]+1)
+signal <- data.table(ens_gene=rownames(signal),signal)
+```
+
+
+```{r rlogChIPAll, cache=TRUE}
+ddsA <- chipmat %>% dplyr::select(-(1:6)) %>%
+  DESeqDataSetFromMatrix(.,data.frame(colnames(.)),~1)
+rldA <- rlog(ddsA,blind=FALSE,fitType="local")
+chipseqd <- assay(rldA)
+colnames(chipseqd) <- sub('GFP-','-',sub('^H3','',sub('^3T3-','',colnames(chipseqd))))
+rownames(chipseqd) <- sub('\\..*$','',atac$Geneid)
+chipseqd <- chipseqd[rowSums(chipseqd)>0,]
+```
+
+
+```{r,fig.width=8,fig.height=12}
+signald <- chipseqd[,chipnames] - chipseqd[,sub('-[^-]*$','-input',chipnames)]
+signald <- data.table(ens_gene=rownames(signald),signald)
+asig <- inner_join(tbl_dt(e2g),signald,by="ens_gene") 
+gfp <- signald %>% dplyr::select(ends_with("GFP")) %>% colnames
+for(i in gfp[c(1,4)]){
+  asig %>% dplyr::select_(GFP=as.symbol(i),"biotype") %>%
+    summarize(GFP=labelQ(GFP),biotype) %>% table %>%
+    plot(las=2,xlab="GFP percentile",main=i,col=brewer.pal(8,"Dark2"),border=FALSE)
+}
+signald <- signald %>% dplyr::filter(ens_gene %in% coding)
+```
+
+
+NIH3T3 H3vOE
+------------
+
+```{r fit_NIH3T3, cache=TRUE}
+defn <- getdef("data/table_3T3RNAseq.txt")
+ddsn <- getdds("data/countGENCODEvM9_3T3RNAseq.edit.txt",defn,~time+cond)
+rldn <- rlog(ddsn,blind=FALSE)
+knitr::kable(colData(ddsn))
+```
+
+```{r resultsNIH3T3Sel}
+set.seed(333)
+resn <- results(ddsn,contrast=c("cond","H3v7","WT"))
+tblns <- timecoursePlots(resn[resn$baseMean>100,],rldn,k=6)
+showDT(tblns)
+```
+
+
+```{r evalFC}
+evalFC_NIH3T3 <- function(signal,tbl,density=FALSE){
+  dat <- tbl %>% dplyr::select(ens_gene,cluster) %>% inner_join(signal,by='ens_gene')
+  if(density) print(
+    ggplot(reshape2::melt(dat),aes(value,fill=variable)) + 
+    geom_density() + facet_wrap(~variable)
+  )
+  model <- glmodel(dat[,-(1:2),with=FALSE],model.matrix(~cluster+0,dat))
+  m <- reshape2::melt(model$beta)
+  lab <- makelabel(m$Var2,"\\.")
+  colnames(lab) <- c("Cell","Cond","Time")
+  m <- data.frame(lab,m)
+  m$Time <- factor(m$Time,c("noinf","infect","inf24","inf48"))
+  m$sdev <- as.numeric(sqrt(model$betavar))
+  
+  # Wald p with Bonferroni correction
+  smark <- data.frame(lab,reshape2::melt(model$wald.p)) %>%
+    filter(value * length(model$wald.p) < 1e-3) %>% dplyr::select(Time,Var1)
+  
+  print(
+    ggplot(m,aes(Time,value,group=Var1,colour=Var1)) +
+    geom_hline(yintercept=0,linetype=2) +
+    geom_point(size=2) + geom_line() + ylab("log2FC") +
+    theme_bw() + scale_color_brewer(palette="Set2") + ylim(-1.2,1.2) +
+    geom_errorbar(aes(ymin=value-1.96*sdev,ymax=value+1.96*sdev),width=.3) +
+    geom_text(aes(Time,0),label="*",size=8,colour="black",data=smark) +
+    facet_wrap(~Var1,2,3)
+  )
+  
+  invisible(dat)
+}
+```
+
+```{r log2FCH37H33}
+sig73 <- data.table(assay(rldn)[,9:12] - assay(rldn)[,5:8],keep.rownames = "ens_gene")
+evalFC_NIH3T3(sig73,tblns,TRUE)
+```
+
+
+```{r log2FCH37WT}
+sig7w <- data.table(assay(rldn)[,9:12] - assay(rldn)[,1:4],keep.rownames = "ens_gene")
+evalFC_NIH3T3(sig7w,tblns) 
+```
+
+```{r log2FCH33WT}
+sig3w <- data.table(assay(rldn)[,5:8] - assay(rldn)[,1:4],keep.rownames = "ens_gene")
+evalFC_NIH3T3(sig3w,tblns) 
+```
+
+```{r GFP_clusterAvg}
+m <- tblns %>%
+  inner_join(signald,by="ens_gene") %>%
+  dplyr::select(cluster,ends_with("-GFP")) %>%
+  reshape2::melt(.)
+label <- data.frame(makelabel(m$variable))
+colnames(label) <- c("Cell","Time","ChIP")
+label$Time <- factor(label$Time,c("G","00h","48h"))
+m <- data.frame(m,label)
+ggplot(m,aes(Time,value,fill=cluster)) +
+  geom_boxplot() + facet_wrap(~Cell) + ylab("GFP") +
+  theme_bw() + scale_fill_brewer(palette="Set2")
+```
+
+
+```{r alongGFP}
+for(i in c("v3","v7")){
+  for(j in c("G","00h","48h")){
+    target <- paste(i,j,"GFP",sep="-")
+    A <- tbl_dt(e2g) %>%
+      dplyr::filter(biotype=="protein_coding") %>%
+      inner_join(signald,by="ens_gene") %>%
+      dplyr::select(-ends_with("H3v3")) %>%
+      arrange_(as.symbol(target)) %>% 
+      dplyr::select(contains(paste0("-",j,"-"))) %>%
+      apply(2,function(x) lowess(x)$y) %>% as.matrix
+    m <- reshape2::melt(A)
+    label <- data.frame(makelabel(m$Var2))
+    colnames(label) <- c("Cell","Time","ChIP")
+    label$Time <- factor(label$Time,c("G","00h","48h"))
+    m <- data.table(m,label)
+    p <- ggplot(m,aes(Var1/20886*100,value,colour=Cell)) + 
+      geom_hline(yintercept=0,col="grey",linetype=2) +
+      geom_vline(xintercept=firstzero(A[,target])/nrow(A)*100,col="grey",linetype=2) +
+      geom_line() + facet_wrap(~ChIP,scale="free_y",1,4) +
+      theme_bw() + theme(legend.position="top") +
+      xlab(sprintf("Percentile of %s",target)) +
+      ylab("log2(ChIP/Input)") +
+      scale_color_brewer(palette="Set2")
+    print(p)
+  }
+}
+```
+
+
+```{r chromatinEnhancement-U}
+tbl <- tblns
+levels(tbl$cluster) <- c("SA","UA","DB","DA","UB","SB")
+m73 <- resN73 %>% tbl_df %>%
+data.table(keep.rownames = "ens_gene") %>%
+  right_join(tbl %>% dplyr::select(ens_gene, cluster, log2FC_E = log2FoldChange)) %>%
+  dplyr::select(ens_gene, cluster, log2FC_E, log2FC_A = log2FoldChange, padj) %>%
+  inner_join(e2g, .) %>% arrange(cluster)
+
+p <- ggplot(m73, aes(log2FC_E, log2FC_A)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_point(alpha = 0.1, size = 0.6) + theme_bw() +
+  geom_point(
+    aes(colour = cluster, size = -log10(padj)),
+    data = m73 %>% dplyr::filter(padj < 0.1, cluster=="UA"),
+    alpha = 0.6
+  ) +
+  xlab("Gene expression log2(H3mm7/Control)") +
+  ylab("Chromatin accessibility log2(H3mm7+/H3.3+)") +
+  scale_color_manual(values="#FC8D62")
+
+print(p + coord_fixed() + theme(legend.position="top"))
+```
