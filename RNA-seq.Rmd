@@ -1,10 +1,12 @@
 ---
 title: "RNA-seq data analysis for H3mm7"
 output:
+  html_document: 
+    keep_md: yes
+    self_contained: no
   html_notebook:
     theme: united
     toc: yes
-  html_document: default
   pdf_document:
     toc: yes
 always_allow_html: yes

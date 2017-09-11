@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>ChIP/ATAC-seq analysis for H3mm7</title>
+
+<script src="ChIPandATAC-seq_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="ChIPandATAC-seq_files/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="ChIPandATAC-seq_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="ChIPandATAC-seq_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="ChIPandATAC-seq_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="ChIPandATAC-seq_files/navigation-1.1/tabsets.js"></script>
+<link href="ChIPandATAC-seq_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="ChIPandATAC-seq_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">ChIP/ATAC-seq analysis for H3mm7</h1>
+
+</div>
+
+
+<pre class="r"><code>source(&quot;RScript/geomNorm.R&quot;)
+source(&quot;RScript/glmodel.R&quot;)
+source(&quot;RScript/DESeq2Workflow.R&quot;)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:data.table&#39;:
+## 
+##     between, first, last</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre><code>## Loading required package: S4Vectors</code></pre>
+<pre><code>## Loading required package: stats4</code></pre>
+<pre><code>## Loading required package: BiocGenerics</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>## 
+## Attaching package: &#39;BiocGenerics&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:parallel&#39;:
+## 
+##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+##     parLapplyLB, parRapply, parSapply, parSapplyLB</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     combine, intersect, setdiff, union</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     IQR, mad, xtabs</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     Filter, Find, Map, Position, Reduce, anyDuplicated, append,
+##     as.data.frame, cbind, colnames, do.call, duplicated, eval,
+##     evalq, get, grep, grepl, intersect, is.unsorted, lapply,
+##     lengths, mapply, match, mget, order, paste, pmax, pmax.int,
+##     pmin, pmin.int, rank, rbind, rownames, sapply, setdiff, sort,
+##     table, tapply, union, unique, unsplit, which, which.max,
+##     which.min</code></pre>
+<pre><code>## 
+## Attaching package: &#39;S4Vectors&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     first, rename</code></pre>
+<pre><code>## The following objects are masked from &#39;package:data.table&#39;:
+## 
+##     first, second</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     colMeans, colSums, expand.grid, rowMeans, rowSums</code></pre>
+<pre><code>## Loading required package: IRanges</code></pre>
+<pre><code>## 
+## Attaching package: &#39;IRanges&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     collapse, desc, slice</code></pre>
+<pre><code>## The following object is masked from &#39;package:data.table&#39;:
+## 
+##     shift</code></pre>
+<pre><code>## Loading required package: GenomicRanges</code></pre>
+<pre><code>## Loading required package: GenomeInfoDb</code></pre>
+<pre><code>## Loading required package: SummarizedExperiment</code></pre>
+<pre><code>## Loading required package: Biobase</code></pre>
+<pre><code>## Welcome to Bioconductor
+## 
+##     Vignettes contain introductory material; view with
+##     &#39;browseVignettes()&#39;. To cite Bioconductor, see
+##     &#39;citation(&quot;Biobase&quot;)&#39;, and for packages &#39;citation(&quot;pkgname&quot;)&#39;.</code></pre>
+<pre class="r"><code>source(&quot;RScript/functionalToys.R&quot;)
+
+library(knitr)
+library(DT)
+library(biomaRt)
+library(data.table)
+library(dtplyr)
+library(dplyr)</code></pre>
+<pre class="r"><code>firstzero &lt;- function(x) which(sort(x)&gt;0)[1]
+
+makelabel &lt;- function(x,sep=&quot;-&quot;)
+  t %.% simplify2array %.% papp(strsplit,sep) %.% as.character %$% x
+
+labelQ &lt;- function(x,n=20) {
+  qt &lt;- seq(0,1,length=n+1)
+  cut(x,
+      include.lowest = TRUE,
+      breaks = quantile(x,qt),
+      labels = round(qt*100)[-1]
+  )
+}</code></pre>
+<pre class="r"><code>ensembl &lt;- useMart(&quot;ENSEMBL_MART_ENSEMBL&quot;,host=&quot;asia.ensembl.org&quot;)
+mart &lt;- useDataset(&quot;mmusculus_gene_ensembl&quot;,mart=ensembl)
+e2g &lt;- getBM(attributes = c(&quot;ensembl_gene_id&quot;,&quot;external_gene_name&quot;,&quot;gene_biotype&quot;), mart = mart)
+e2g &lt;- dplyr::rename(e2g, ens_gene = ensembl_gene_id, ext_gene = external_gene_name, biotype = gene_biotype)
+coding &lt;- e2g$ens_gene[e2g$biotype == &quot;protein_coding&quot;]</code></pre>
+<pre class="r"><code>atac&lt;-fread(&#39;data/countSubNuc20-150_GENCODEvM9_ATAC-NIH3T3_exonUp2k.edit.txt&#39;,skip=1,showProgress = FALSE)
+mat &lt;- as.matrix(atac[,-(1:6),with=FALSE])
+colnames(mat) &lt;- sub(&quot;lot12&quot;,&quot;lot2&quot;,colnames(mat))
+rownames(mat) &lt;- sub(&#39;\\..*$&#39;,&#39;&#39;,atac$Geneid)
+mat &lt;- mat[rowSums(mat)&gt;0,]
+tbN &lt;- data.frame(t(simplify2array(strsplit(colnames(mat),&#39;-&#39;)))[,-1])
+colnames(tbN) &lt;- c(&#39;clone&#39;,&#39;time&#39;,&#39;lot&#39;)
+ddsN &lt;- DESeqDataSetFromMatrix(mat,tbN,~time+clone)
+modelN &lt;- DESeq(ddsN,fitType = &#39;local&#39;)</code></pre>
+<pre><code>## estimating size factors</code></pre>
+<pre><code>## estimating dispersions</code></pre>
+<pre><code>## gene-wise dispersion estimates</code></pre>
+<pre><code>## mean-dispersion relationship</code></pre>
+<pre><code>## final dispersion estimates</code></pre>
+<pre><code>## fitting model and testing</code></pre>
+<pre class="r"><code>rlN &lt;- rlog(modelN,blind=FALSE)
+resN7 &lt;- results(modelN,contrast = c(&#39;clone&#39;,&#39;H37&#39;,&#39;WT&#39;))
+resN3 &lt;- results(modelN,contrast = c(&#39;clone&#39;,&#39;H33&#39;,&#39;WT&#39;))
+resN73 &lt;- results(modelN,contrast = c(&#39;clone&#39;,&#39;H37&#39;,&#39;H33&#39;))
+tblN &lt;- data.table(ens_gene=rownames(resN7),tbl_dt(resN7)) %&gt;%
+  filter(padj&lt;0.1) %&gt;% right_join(tbl_dt(e2g),.,by=&quot;ens_gene&quot;)
+summary(resN7)</code></pre>
+<pre><code>## 
+## out of 44009 with nonzero total read count
+## adjusted p-value &lt; 0.1
+## LFC &gt; 0 (up)     : 228, 0.52% 
+## LFC &lt; 0 (down)   : 579, 1.3% 
+## outliers [1]     : 0, 0% 
+## low counts [2]   : 24744, 56% 
+## (mean count &lt; 3)
+## [1] see &#39;cooksCutoff&#39; argument of ?results
+## [2] see &#39;independentFiltering&#39; argument of ?results</code></pre>
+<pre class="r"><code>lN &lt;- assay(rlN)
+mN &lt;- data.frame(t(simplify2array(strsplit(sub(&#39;3T3-&#39;,&#39;&#39;,colnames(lN)),&#39;-&#39;))))
+colnames(mN) &lt;- c(&quot;Cell&quot;,&quot;Time&quot;,&quot;Lot&quot;)
+mN$Time &lt;- factor(mN$Time,c(&#39;noinf&#39;,&#39;inf&#39;,&#39;D48&#39;))
+gD &lt;- na.omit(with(resN7,rownames(resN7)[padj &lt; 0.1 &amp; log2FoldChange &lt; 0]))
+mN$Accessibility &lt;- colMeans(lN[gD,])
+ggplot(mN,aes(Time,Accessibility,group=Cell:Lot,colour=Cell,lty=Lot,shape=Cell)) +
+  geom_point(size=3) + geom_line() + theme_bw() +
+  scale_color_brewer(palette=&quot;Set1&quot;)</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/unnamed-chunk-1-1.png" /><!-- --></p>
+<pre class="r"><code>gU &lt;- na.omit(with(resN7,rownames(resN7)[padj &lt; 0.1 &amp; log2FoldChange &gt; 0]))
+mN$Accessibility &lt;- colMeans(lN[gU,])
+ggplot(mN,aes(Time,Accessibility,group=Cell:Lot,colour=Cell,lty=Lot,shape=Cell)) +
+  geom_point(size=3) + geom_line() + theme_bw() +
+  scale_color_brewer(palette=&quot;Set1&quot;)</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/unnamed-chunk-1-2.png" /><!-- --></p>
+<pre class="r"><code>chipmat &lt;- fread(&#39;data/countGENCODEvM9_3T3ChIPseq.edit.txt&#39;,skip=1,showProgress=FALSE)
+chipseq &lt;- chipmat %&gt;% dplyr::select(-(1:6)) %&gt;% as.matrix
+colnames(chipseq) &lt;- sub(&#39;GFP-&#39;,&#39;-&#39;,sub(&#39;^H3&#39;,&#39;&#39;,sub(&#39;^3T3-&#39;,&#39;&#39;,colnames(chipseq))))
+rownames(chipseq) &lt;- sub(&#39;\\..*$&#39;,&#39;&#39;,chipmat$Geneid)
+chipseq &lt;- chipseq[apply(chipseq,1,sum) &gt; 0,]
+chipseq &lt;- gscale(as.matrix(chipseq)+1)
+chipnames &lt;- colnames(chipseq)[grep(&quot;input&quot;,colnames(chipseq),invert=TRUE)]
+signal &lt;- log2(chipseq[,chipnames]+1) - log2(chipseq[,sub(&#39;-[^-]*$&#39;,&#39;-input&#39;,chipnames)]+1)
+signal &lt;- data.table(ens_gene=rownames(signal),signal)</code></pre>
+<pre class="r"><code>ddsA &lt;- chipmat %&gt;% dplyr::select(-(1:6)) %&gt;%
+  DESeqDataSetFromMatrix(.,data.frame(colnames(.)),~1)
+rldA &lt;- rlog(ddsA,blind=FALSE,fitType=&quot;local&quot;)
+chipseqd &lt;- assay(rldA)
+colnames(chipseqd) &lt;- sub(&#39;GFP-&#39;,&#39;-&#39;,sub(&#39;^H3&#39;,&#39;&#39;,sub(&#39;^3T3-&#39;,&#39;&#39;,colnames(chipseqd))))
+rownames(chipseqd) &lt;- sub(&#39;\\..*$&#39;,&#39;&#39;,atac$Geneid)
+chipseqd &lt;- chipseqd[rowSums(chipseqd)&gt;0,]</code></pre>
+<pre class="r"><code>signald &lt;- chipseqd[,chipnames] - chipseqd[,sub(&#39;-[^-]*$&#39;,&#39;-input&#39;,chipnames)]
+signald &lt;- data.table(ens_gene=rownames(signald),signald)
+asig &lt;- inner_join(tbl_dt(e2g),signald,by=&quot;ens_gene&quot;) 
+gfp &lt;- signald %&gt;% dplyr::select(ends_with(&quot;GFP&quot;)) %&gt;% colnames
+for(i in gfp[c(1,4)]){
+  asig %&gt;% dplyr::select_(GFP=as.symbol(i),&quot;biotype&quot;) %&gt;%
+    summarize(GFP=labelQ(GFP),biotype) %&gt;% table %&gt;%
+    plot(las=2,xlab=&quot;GFP percentile&quot;,main=i,col=brewer.pal(8,&quot;Dark2&quot;),border=FALSE)
+}</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/unnamed-chunk-2-1.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/unnamed-chunk-2-2.png" /><!-- --></p>
+<pre class="r"><code>signald &lt;- signald %&gt;% dplyr::filter(ens_gene %in% coding)</code></pre>
+<div id="nih3t3-h3voe" class="section level2">
+<h2>NIH3T3 H3vOE</h2>
+<pre class="r"><code>defn &lt;- getdef(&quot;data/table_3T3RNAseq.txt&quot;)
+ddsn &lt;- getdds(&quot;data/countGENCODEvM9_3T3RNAseq.edit.txt&quot;,defn,~time+cond)</code></pre>
+<pre><code>## estimating size factors</code></pre>
+<pre><code>## estimating dispersions</code></pre>
+<pre><code>## gene-wise dispersion estimates</code></pre>
+<pre><code>## mean-dispersion relationship</code></pre>
+<pre><code>## final dispersion estimates</code></pre>
+<pre><code>## fitting model and testing</code></pre>
+<pre class="r"><code>rldn &lt;- rlog(ddsn,blind=FALSE)
+knitr::kable(colData(ddsn))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">cond</th>
+<th align="left">time</th>
+<th align="left">rep</th>
+<th align="left">clone</th>
+<th align="right">sizeFactor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>X3T3.WT.noinf</td>
+<td align="left">WT</td>
+<td align="left">noinf</td>
+<td align="left">Rep1</td>
+<td align="left">WT_Rep1</td>
+<td align="right">1.0082323</td>
+</tr>
+<tr class="even">
+<td>X3T3.WT.infect</td>
+<td align="left">WT</td>
+<td align="left">infect</td>
+<td align="left">Rep1</td>
+<td align="left">WT_Rep1</td>
+<td align="right">1.2420505</td>
+</tr>
+<tr class="odd">
+<td>X3T3.WT.inf24</td>
+<td align="left">WT</td>
+<td align="left">inf24</td>
+<td align="left">Rep1</td>
+<td align="left">WT_Rep1</td>
+<td align="right">0.9808936</td>
+</tr>
+<tr class="even">
+<td>X3T3.WT.inf48</td>
+<td align="left">WT</td>
+<td align="left">inf48</td>
+<td align="left">Rep1</td>
+<td align="left">WT_Rep1</td>
+<td align="right">0.9110183</td>
+</tr>
+<tr class="odd">
+<td>X3T3.H3v3.noinf</td>
+<td align="left">H3v3</td>
+<td align="left">noinf</td>
+<td align="left">Rep1</td>
+<td align="left">H3v3_Rep1</td>
+<td align="right">1.1716920</td>
+</tr>
+<tr class="even">
+<td>X3T3.H3v3.infect</td>
+<td align="left">H3v3</td>
+<td align="left">infect</td>
+<td align="left">Rep1</td>
+<td align="left">H3v3_Rep1</td>
+<td align="right">1.0533892</td>
+</tr>
+<tr class="odd">
+<td>X3T3.H3v3.inf24</td>
+<td align="left">H3v3</td>
+<td align="left">inf24</td>
+<td align="left">Rep1</td>
+<td align="left">H3v3_Rep1</td>
+<td align="right">0.9724215</td>
+</tr>
+<tr class="even">
+<td>X3T3.H3v3.inf48</td>
+<td align="left">H3v3</td>
+<td align="left">inf48</td>
+<td align="left">Rep1</td>
+<td align="left">H3v3_Rep1</td>
+<td align="right">0.8092273</td>
+</tr>
+<tr class="odd">
+<td>X3T3.H3v7.noinf</td>
+<td align="left">H3v7</td>
+<td align="left">noinf</td>
+<td align="left">Rep1</td>
+<td align="left">H3v7_Rep1</td>
+<td align="right">1.1884297</td>
+</tr>
+<tr class="even">
+<td>X3T3.H3v7.infect</td>
+<td align="left">H3v7</td>
+<td align="left">infect</td>
+<td align="left">Rep1</td>
+<td align="left">H3v7_Rep1</td>
+<td align="right">1.1936027</td>
+</tr>
+<tr class="odd">
+<td>X3T3.H3v7.inf24</td>
+<td align="left">H3v7</td>
+<td align="left">inf24</td>
+<td align="left">Rep1</td>
+<td align="left">H3v7_Rep1</td>
+<td align="right">0.9042245</td>
+</tr>
+<tr class="even">
+<td>X3T3.H3v7.inf48</td>
+<td align="left">H3v7</td>
+<td align="left">inf48</td>
+<td align="left">Rep1</td>
+<td align="left">H3v7_Rep1</td>
+<td align="right">0.8198526</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>set.seed(333)
+resn &lt;- results(ddsn,contrast=c(&quot;cond&quot;,&quot;H3v7&quot;,&quot;WT&quot;))
+tblns &lt;- timecoursePlots(resn[resn$baseMean&gt;100,],rldn,k=6)</code></pre>
+<pre><code>## Warning in lda.default(x, grouping, ...): variables are collinear</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/resultsNIH3T3Sel-1.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/resultsNIH3T3Sel-2.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/resultsNIH3T3Sel-3.png" /><!-- --></p>
+<pre class="r"><code>#showDT(tblns)</code></pre>
+<pre class="r"><code>evalFC_NIH3T3 &lt;- function(signal,tbl,density=FALSE){
+  dat &lt;- tbl %&gt;% dplyr::select(ens_gene,cluster) %&gt;% inner_join(signal,by=&#39;ens_gene&#39;)
+  if(density) print(
+    ggplot(reshape2::melt(dat),aes(value,fill=variable)) + 
+    geom_density() + facet_wrap(~variable)
+  )
+  model &lt;- glmodel(dat[,-(1:2),with=FALSE],model.matrix(~cluster+0,dat))
+  m &lt;- reshape2::melt(model$beta)
+  lab &lt;- makelabel(m$Var2,&quot;\\.&quot;)
+  colnames(lab) &lt;- c(&quot;Cell&quot;,&quot;Cond&quot;,&quot;Time&quot;)
+  m &lt;- data.frame(lab,m)
+  m$Time &lt;- factor(m$Time,c(&quot;noinf&quot;,&quot;infect&quot;,&quot;inf24&quot;,&quot;inf48&quot;))
+  m$sdev &lt;- as.numeric(sqrt(model$betavar))
+  
+  # Wald p with Bonferroni correction
+  smark &lt;- data.frame(lab,reshape2::melt(model$wald.p)) %&gt;%
+    filter(value * length(model$wald.p) &lt; 1e-3) %&gt;% dplyr::select(Time,Var1)
+  
+  print(
+    ggplot(m,aes(Time,value,group=Var1,colour=Var1)) +
+    geom_hline(yintercept=0,linetype=2) +
+    geom_point(size=2) + geom_line() + ylab(&quot;log2FC&quot;) +
+    theme_bw() + scale_color_brewer(palette=&quot;Set2&quot;) + ylim(-1.2,1.2) +
+    geom_errorbar(aes(ymin=value-1.96*sdev,ymax=value+1.96*sdev),width=.3) +
+    geom_text(aes(Time,0),label=&quot;*&quot;,size=8,colour=&quot;black&quot;,data=smark) +
+    facet_wrap(~Var1,2,3)
+  )
+  
+  invisible(dat)
+}</code></pre>
+<pre class="r"><code>sig73 &lt;- data.table(assay(rldn)[,9:12] - assay(rldn)[,5:8],keep.rownames = &quot;ens_gene&quot;)
+evalFC_NIH3T3(sig73,tblns,TRUE)</code></pre>
+<pre><code>## Warning in melt.data.table(dat): To be consistent with reshape2&#39;s melt,
+## id.vars and measure.vars are internally guessed when both are &#39;NULL&#39;. All
+## non-numeric/integer/logical type columns are conisdered id.vars, which in
+## this case are columns [ens_gene, cluster]. Consider providing at least one
+## of &#39;id&#39; or &#39;measure&#39; vars in future.</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/log2FCH37H33-1.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/log2FCH37H33-2.png" /><!-- --></p>
+<pre class="r"><code>sig7w &lt;- data.table(assay(rldn)[,9:12] - assay(rldn)[,1:4],keep.rownames = &quot;ens_gene&quot;)
+evalFC_NIH3T3(sig7w,tblns) </code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/log2FCH37WT-1.png" /><!-- --></p>
+<pre class="r"><code>sig3w &lt;- data.table(assay(rldn)[,5:8] - assay(rldn)[,1:4],keep.rownames = &quot;ens_gene&quot;)
+evalFC_NIH3T3(sig3w,tblns) </code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbar).</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/log2FCH33WT-1.png" /><!-- --></p>
+<pre class="r"><code>m &lt;- tblns %&gt;%
+  inner_join(signald,by=&quot;ens_gene&quot;) %&gt;%
+  dplyr::select(cluster,ends_with(&quot;-GFP&quot;)) %&gt;%
+  reshape2::melt(.)</code></pre>
+<pre><code>## Warning in melt.data.table(.): To be consistent with reshape2&#39;s melt,
+## id.vars and measure.vars are internally guessed when both are &#39;NULL&#39;. All
+## non-numeric/integer/logical type columns are conisdered id.vars, which in
+## this case are columns [cluster]. Consider providing at least one of &#39;id&#39; or
+## &#39;measure&#39; vars in future.</code></pre>
+<pre class="r"><code>label &lt;- data.frame(makelabel(m$variable))
+colnames(label) &lt;- c(&quot;Cell&quot;,&quot;Time&quot;,&quot;ChIP&quot;)
+label$Time &lt;- factor(label$Time,c(&quot;G&quot;,&quot;00h&quot;,&quot;48h&quot;))
+m &lt;- data.frame(m,label)
+ggplot(m,aes(Time,value,fill=cluster)) +
+  geom_boxplot() + facet_wrap(~Cell) + ylab(&quot;GFP&quot;) +
+  theme_bw() + scale_fill_brewer(palette=&quot;Set2&quot;)</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/GFP_clusterAvg-1.png" /><!-- --></p>
+<pre class="r"><code>for(i in c(&quot;v3&quot;,&quot;v7&quot;)){
+  for(j in c(&quot;G&quot;,&quot;00h&quot;,&quot;48h&quot;)){
+    target &lt;- paste(i,j,&quot;GFP&quot;,sep=&quot;-&quot;)
+    A &lt;- tbl_dt(e2g) %&gt;%
+      dplyr::filter(biotype==&quot;protein_coding&quot;) %&gt;%
+      inner_join(signald,by=&quot;ens_gene&quot;) %&gt;%
+      dplyr::select(-ends_with(&quot;H3v3&quot;)) %&gt;%
+      arrange_(as.symbol(target)) %&gt;% 
+      dplyr::select(contains(paste0(&quot;-&quot;,j,&quot;-&quot;))) %&gt;%
+      apply(2,function(x) lowess(x)$y) %&gt;% as.matrix
+    m &lt;- reshape2::melt(A)
+    label &lt;- data.frame(makelabel(m$Var2))
+    colnames(label) &lt;- c(&quot;Cell&quot;,&quot;Time&quot;,&quot;ChIP&quot;)
+    label$Time &lt;- factor(label$Time,c(&quot;G&quot;,&quot;00h&quot;,&quot;48h&quot;))
+    m &lt;- data.table(m,label)
+    p &lt;- ggplot(m,aes(Var1/20886*100,value,colour=Cell)) + 
+      geom_hline(yintercept=0,col=&quot;grey&quot;,linetype=2) +
+      geom_vline(xintercept=firstzero(A[,target])/nrow(A)*100,col=&quot;grey&quot;,linetype=2) +
+      geom_line() + facet_wrap(~ChIP,scale=&quot;free_y&quot;,1,4) +
+      theme_bw() + theme(legend.position=&quot;top&quot;) +
+      xlab(sprintf(&quot;Percentile of %s&quot;,target)) +
+      ylab(&quot;log2(ChIP/Input)&quot;) +
+      scale_color_brewer(palette=&quot;Set2&quot;)
+    print(p)
+  }
+}</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/alongGFP-1.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/alongGFP-2.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/alongGFP-3.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/alongGFP-4.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/alongGFP-5.png" /><!-- --><img src="ChIPandATAC-seq_files/figure-html/alongGFP-6.png" /><!-- --></p>
+<pre class="r"><code>tbl &lt;- tblns
+levels(tbl$cluster) &lt;- c(&quot;SA&quot;,&quot;UA&quot;,&quot;DB&quot;,&quot;DA&quot;,&quot;UB&quot;,&quot;SB&quot;)
+m73 &lt;- resN73 %&gt;% tbl_df %&gt;%
+data.table(keep.rownames = &quot;ens_gene&quot;) %&gt;%
+  right_join(tbl %&gt;% dplyr::select(ens_gene, cluster, log2FC_E = log2FoldChange)) %&gt;%
+  dplyr::select(ens_gene, cluster, log2FC_E, log2FC_A = log2FoldChange, padj) %&gt;%
+  inner_join(e2g, .) %&gt;% arrange(cluster)</code></pre>
+<pre><code>## Warning in as.data.frame(x, row.names = NULL, optional = optional, ...):
+## Arguments in &#39;...&#39; ignored</code></pre>
+<pre><code>## Joining, by = &quot;ens_gene&quot;
+## Joining, by = &quot;ens_gene&quot;</code></pre>
+<pre class="r"><code>p &lt;- ggplot(m73, aes(log2FC_E, log2FC_A)) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_point(alpha = 0.1, size = 0.6) + theme_bw() +
+  geom_point(
+    aes(colour = cluster, size = -log10(padj)),
+    data = m73 %&gt;% dplyr::filter(padj &lt; 0.1, cluster==&quot;UA&quot;),
+    alpha = 0.6
+  ) +
+  xlab(&quot;Gene expression log2(H3mm7/Control)&quot;) +
+  ylab(&quot;Chromatin accessibility log2(H3mm7+/H3.3+)&quot;) +
+  scale_color_manual(values=&quot;#FC8D62&quot;)
+
+print(p + coord_fixed() + theme(legend.position=&quot;top&quot;))</code></pre>
+<pre><code>## Warning: Removed 17 rows containing missing values (geom_point).</code></pre>
+<p><img src="ChIPandATAC-seq_files/figure-html/chromatinEnhancement-U-1.png" /><!-- --></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
