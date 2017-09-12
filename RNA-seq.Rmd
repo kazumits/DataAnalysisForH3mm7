@@ -1,7 +1,7 @@
 ---
 title: "RNA-seq data analysis for H3mm7"
 output:
-  html_document: 
+  html_document:
     keep_md: yes
     self_contained: no
   html_notebook:
@@ -80,13 +80,13 @@ B <- with(tblko %>% modTbl, table(biotype,cluster))
 op <- par(mai=c(.5,2.2,.5,.5))
 barplot(t(B[order(-rowSums(B))[1:6],]),beside=TRUE,col=brewer.pal(6,"Set2"),legend.text = colnames(B),las=1,horiz = TRUE)
 par(op)
-showDT(tblko)
+#showDT(tblko)
 ```
 
 ```{r resultsH3mm7Sel}
 set.seed(333)
 tblks <- timecoursePlots(resko[resko$baseMean>100,],rldko,k=6)
-showDT(tblks)
+#showDT(tblks)
 ```
 
 
@@ -129,13 +129,13 @@ pal <- brewer.pal(6,"Set1")
 op <- par(mai=c(.5,2.2,.5,.5))
 barplot(t(B[order(-rowSums(B))[1:6],]),beside=TRUE,col=pal,legend.text = colnames(B),las=1,horiz = TRUE)
 par(op)
-showDT(tbln)
+#showDT(tbln)
 ```
 
 ```{r resultsNIH3T3Sel}
 set.seed(333)
 tblns <- timecoursePlots(resn[resn$baseMean>100,],rldn,k=6)
-showDT(tblns)
+#showDT(tblns)
 ```
 
 #### GSEA
@@ -168,7 +168,7 @@ knitr::kable(colData(ddsm))
 ```{r results_siMacroH2A1}
 resm <- results(ddsm,name="timeMT.condmH2A1.2i")
 tblm <- timecoursePlots(resm,rldm,k=4)
-showDT(tblm)
+#showDT(tblm)
 ```
 
 BMAL1-KO in hip cartilage
@@ -190,6 +190,6 @@ knitr::kable(colData(ddsb))
 resb <- results(ddsb,name="time9PM.condKO")
 # same alpha as their paper
 tblb <- timecoursePlots(resb,rldb,k=4,alpha=0.05)
-showDT(tblb %>% filter(abs(log2FoldChange) > 1)) 
+#showDT(tblb %>% filter(abs(log2FoldChange) > 1)) 
 ```
 
