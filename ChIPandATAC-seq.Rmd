@@ -26,7 +26,7 @@ library(dplyr)
 ```
 
 ```{r sessionInfo}
-sessionInfo()
+print(sessionInfo(),locale=FALSE)
 ```
 
 ```{r helperFunctions}

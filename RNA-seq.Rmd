@@ -27,7 +27,7 @@ source("RScript/DESeq2Workflow.R")
 ```
 
 ```{r sessionInfo}
-sessionInfo()
+print(sessionInfo(),locale=FALSE)
 ```
 
 ### Helper functions

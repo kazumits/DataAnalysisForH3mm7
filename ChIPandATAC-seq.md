@@ -17,20 +17,12 @@ library(dplyr)
 
 
 ```r
-sessionInfo()
+print(sessionInfo(),locale=FALSE)
 ```
 
 ```
 ## R version 3.3.2 (2016-10-31)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
-## 
-## locale:
-##  [1] LC_CTYPE=ja_JP.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=ja_JP.UTF-8        LC_COLLATE=ja_JP.UTF-8    
-##  [5] LC_MONETARY=ja_JP.UTF-8    LC_MESSAGES=ja_JP.UTF-8   
-##  [7] LC_PAPER=ja_JP.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=ja_JP.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
