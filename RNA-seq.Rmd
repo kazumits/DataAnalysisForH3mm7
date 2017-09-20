@@ -26,6 +26,10 @@ library(dplyr)
 source("RScript/DESeq2Workflow.R")
 ```
 
+```{r sessionInfo}
+sessionInfo()
+```
+
 ### Helper functions
 
 ```{r helperFunctions}

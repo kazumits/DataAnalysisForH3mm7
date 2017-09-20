@@ -11,7 +11,7 @@ output:
 always_allow_html: yes
 ---
 
-```{r setup}
+```{r setup, message=FALSE}
 source("RScript/geomNorm.R")
 source("RScript/glmodel.R")
 source("RScript/DESeq2Workflow.R")
@@ -23,6 +23,10 @@ library(biomaRt)
 library(data.table)
 library(dtplyr)
 library(dplyr)
+```
+
+```{r sessionInfo}
+sessionInfo()
 ```
 
 ```{r helperFunctions}

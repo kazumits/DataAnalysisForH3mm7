@@ -5,153 +5,6 @@
 source("RScript/geomNorm.R")
 source("RScript/glmodel.R")
 source("RScript/DESeq2Workflow.R")
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:data.table':
-## 
-##     between, first, last
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```
-## Loading required package: S4Vectors
-```
-
-```
-## Loading required package: stats4
-```
-
-```
-## Loading required package: BiocGenerics
-```
-
-```
-## Loading required package: parallel
-```
-
-```
-## 
-## Attaching package: 'BiocGenerics'
-```
-
-```
-## The following objects are masked from 'package:parallel':
-## 
-##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-##     parLapplyLB, parRapply, parSapply, parSapplyLB
-```
-
-```
-## The following objects are masked from 'package:dplyr':
-## 
-##     combine, intersect, setdiff, union
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     IQR, mad, xtabs
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     Filter, Find, Map, Position, Reduce, anyDuplicated, append,
-##     as.data.frame, cbind, colnames, do.call, duplicated, eval,
-##     evalq, get, grep, grepl, intersect, is.unsorted, lapply,
-##     lengths, mapply, match, mget, order, paste, pmax, pmax.int,
-##     pmin, pmin.int, rank, rbind, rownames, sapply, setdiff, sort,
-##     table, tapply, union, unique, unsplit, which, which.max,
-##     which.min
-```
-
-```
-## 
-## Attaching package: 'S4Vectors'
-```
-
-```
-## The following objects are masked from 'package:dplyr':
-## 
-##     first, rename
-```
-
-```
-## The following objects are masked from 'package:data.table':
-## 
-##     first, second
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     colMeans, colSums, expand.grid, rowMeans, rowSums
-```
-
-```
-## Loading required package: IRanges
-```
-
-```
-## 
-## Attaching package: 'IRanges'
-```
-
-```
-## The following objects are masked from 'package:dplyr':
-## 
-##     collapse, desc, slice
-```
-
-```
-## The following object is masked from 'package:data.table':
-## 
-##     shift
-```
-
-```
-## Loading required package: GenomicRanges
-```
-
-```
-## Loading required package: GenomeInfoDb
-```
-
-```
-## Loading required package: SummarizedExperiment
-```
-
-```
-## Loading required package: Biobase
-```
-
-```
-## Welcome to Bioconductor
-## 
-##     Vignettes contain introductory material; view with
-##     'browseVignettes()'. To cite Bioconductor, see
-##     'citation("Biobase")', and for packages 'citation("pkgname")'.
-```
-
-```r
 source("RScript/functionalToys.R")
 
 library(knitr)
@@ -160,6 +13,61 @@ library(biomaRt)
 library(data.table)
 library(dtplyr)
 library(dplyr)
+```
+
+
+```r
+sessionInfo()
+```
+
+```
+## R version 3.3.2 (2016-10-31)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## 
+## locale:
+##  [1] LC_CTYPE=ja_JP.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=ja_JP.UTF-8        LC_COLLATE=ja_JP.UTF-8    
+##  [5] LC_MONETARY=ja_JP.UTF-8    LC_MESSAGES=ja_JP.UTF-8   
+##  [7] LC_PAPER=ja_JP.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=ja_JP.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
+## 
+## other attached packages:
+##  [1] biomaRt_2.30.0             DT_0.2                    
+##  [3] knitr_1.17                 DESeq2_1.14.1             
+##  [5] SummarizedExperiment_1.4.0 Biobase_2.34.0            
+##  [7] GenomicRanges_1.26.4       GenomeInfoDb_1.10.3       
+##  [9] IRanges_2.8.2              S4Vectors_0.12.2          
+## [11] BiocGenerics_0.20.0        dplyr_0.7.3               
+## [13] dtplyr_0.0.2               data.table_1.10.4         
+## [15] ggplot2_2.2.1              RColorBrewer_1.1-2        
+## 
+## loaded via a namespace (and not attached):
+##  [1] locfit_1.5-9.1       Rcpp_0.12.12         lattice_0.20-35     
+##  [4] assertthat_0.2.0     rprojroot_1.2        digest_0.6.12       
+##  [7] R6_2.2.2             plyr_1.8.4           backports_1.1.0     
+## [10] acepack_1.4.1        RSQLite_2.0          evaluate_0.10.1     
+## [13] zlibbioc_1.20.0      rlang_0.1.2          lazyeval_0.2.0      
+## [16] annotate_1.52.1      blob_1.1.0           rpart_4.1-11        
+## [19] Matrix_1.2-11        checkmate_1.8.3      rmarkdown_1.6       
+## [22] splines_3.3.2        BiocParallel_1.8.2   geneplotter_1.52.0  
+## [25] stringr_1.2.0        foreign_0.8-69       htmlwidgets_0.9     
+## [28] bit_1.1-12           RCurl_1.95-4.8       munsell_0.4.3       
+## [31] pkgconfig_2.0.1      base64enc_0.1-3      htmltools_0.3.6     
+## [34] nnet_7.3-12          tibble_1.3.4         gridExtra_2.3       
+## [37] htmlTable_1.9        Hmisc_4.0-3          XML_3.98-1.9        
+## [40] bitops_1.0-6         grid_3.3.2           xtable_1.8-2        
+## [43] gtable_0.2.0         DBI_0.7              magrittr_1.5        
+## [46] scales_0.5.0         stringi_1.1.5        XVector_0.14.1      
+## [49] genefilter_1.56.0    bindrcpp_0.2         latticeExtra_0.6-28 
+## [52] Formula_1.2-2        tools_3.3.2          bit64_0.9-7         
+## [55] glue_1.1.1           survival_2.41-3      yaml_2.1.14         
+## [58] AnnotationDbi_1.36.2 colorspace_1.3-2     cluster_2.0.6       
+## [61] memoise_1.1.0        bindr_0.1
 ```
 
 
