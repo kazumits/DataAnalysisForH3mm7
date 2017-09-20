@@ -200,7 +200,9 @@ tlab &lt;- function(res,alpha=0.1,thresh=0)
   ]
 
 degLabs &lt;- function(dds,contrast,alpha=0.1,thresh=100)
-  dds %&gt;% results(contrast=contrast) %&gt;% tlab(alpha,thresh)</code></pre>
+  dds %&gt;% results(contrast=contrast) %&gt;% tlab(alpha,thresh)
+
+tablemd &lt;- function(x,...) knitr::kable(x,format=&quot;markdown&quot;,...)</code></pre>
 </div>
 <div id="load-biomart-annotation" class="section level3">
 <h3>Load bioMart annotation</h3>
@@ -222,11 +224,11 @@ ddsko &lt;- getdds(&quot;data/countGENCODEvM9_C2C12RNAseq.edit.txt&quot;,defko,~
 <pre><code>## final dispersion estimates</code></pre>
 <pre><code>## fitting model and testing</code></pre>
 <pre class="r"><code>rldko &lt;- rlog(ddsko,blind=FALSE)
-knitr::kable(colData(ddsko))</code></pre>
+tablemd(colData(ddsko))</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">cell</th>
 <th align="left">clone</th>
 <th align="left">time</th>
@@ -237,7 +239,7 @@ knitr::kable(colData(ddsko))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>C2C12.WT1.G</td>
+<td align="left">C2C12.WT1.G</td>
 <td align="left">C2C12</td>
 <td align="left">WT1</td>
 <td align="left">G</td>
@@ -246,7 +248,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">3.3203216</td>
 </tr>
 <tr class="even">
-<td>C2C12.WT2.G</td>
+<td align="left">C2C12.WT2.G</td>
 <td align="left">C2C12</td>
 <td align="left">WT2</td>
 <td align="left">G</td>
@@ -255,7 +257,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.5707238</td>
 </tr>
 <tr class="odd">
-<td>C2C12.3A3.G</td>
+<td align="left">C2C12.3A3.G</td>
 <td align="left">C2C12</td>
 <td align="left">3A3</td>
 <td align="left">G</td>
@@ -264,7 +266,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8365059</td>
 </tr>
 <tr class="even">
-<td>C2C12.3E4.G</td>
+<td align="left">C2C12.3E4.G</td>
 <td align="left">C2C12</td>
 <td align="left">3E4</td>
 <td align="left">G</td>
@@ -273,7 +275,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8409781</td>
 </tr>
 <tr class="odd">
-<td>C2C12.WT1.D24</td>
+<td align="left">C2C12.WT1.D24</td>
 <td align="left">C2C12</td>
 <td align="left">WT1</td>
 <td align="left">D24</td>
@@ -282,7 +284,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">3.0602057</td>
 </tr>
 <tr class="even">
-<td>C2C12.WT2.D24</td>
+<td align="left">C2C12.WT2.D24</td>
 <td align="left">C2C12</td>
 <td align="left">WT2</td>
 <td align="left">D24</td>
@@ -291,7 +293,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.3199982</td>
 </tr>
 <tr class="odd">
-<td>C2C12.3A3.D24</td>
+<td align="left">C2C12.3A3.D24</td>
 <td align="left">C2C12</td>
 <td align="left">3A3</td>
 <td align="left">D24</td>
@@ -300,7 +302,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8484708</td>
 </tr>
 <tr class="even">
-<td>C2C12.3E4.D24</td>
+<td align="left">C2C12.3E4.D24</td>
 <td align="left">C2C12</td>
 <td align="left">3E4</td>
 <td align="left">D24</td>
@@ -309,7 +311,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.6981897</td>
 </tr>
 <tr class="odd">
-<td>C2C12.WT1.D48</td>
+<td align="left">C2C12.WT1.D48</td>
 <td align="left">C2C12</td>
 <td align="left">WT1</td>
 <td align="left">D48</td>
@@ -318,7 +320,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">2.8720869</td>
 </tr>
 <tr class="even">
-<td>C2C12.WT2.D48</td>
+<td align="left">C2C12.WT2.D48</td>
 <td align="left">C2C12</td>
 <td align="left">WT2</td>
 <td align="left">D48</td>
@@ -327,7 +329,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.6347962</td>
 </tr>
 <tr class="odd">
-<td>C2C12.3A3.D48</td>
+<td align="left">C2C12.3A3.D48</td>
 <td align="left">C2C12</td>
 <td align="left">3A3</td>
 <td align="left">D48</td>
@@ -336,7 +338,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.7034159</td>
 </tr>
 <tr class="even">
-<td>C2C12.3E4.D48</td>
+<td align="left">C2C12.3E4.D48</td>
 <td align="left">C2C12</td>
 <td align="left">3E4</td>
 <td align="left">D48</td>
@@ -345,7 +347,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8979018</td>
 </tr>
 <tr class="odd">
-<td>C2C12.WT1.D72</td>
+<td align="left">C2C12.WT1.D72</td>
 <td align="left">C2C12</td>
 <td align="left">WT1</td>
 <td align="left">D72</td>
@@ -354,7 +356,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">2.3229792</td>
 </tr>
 <tr class="even">
-<td>C2C12.WT2.D72</td>
+<td align="left">C2C12.WT2.D72</td>
 <td align="left">C2C12</td>
 <td align="left">WT2</td>
 <td align="left">D72</td>
@@ -363,7 +365,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8415663</td>
 </tr>
 <tr class="odd">
-<td>C2C12.3A3.D72</td>
+<td align="left">C2C12.3A3.D72</td>
 <td align="left">C2C12</td>
 <td align="left">3A3</td>
 <td align="left">D72</td>
@@ -372,7 +374,7 @@ knitr::kable(colData(ddsko))</code></pre>
 <td align="right">0.8621735</td>
 </tr>
 <tr class="even">
-<td>C2C12.3E4.D72</td>
+<td align="left">C2C12.3E4.D72</td>
 <td align="left">C2C12</td>
 <td align="left">3E4</td>
 <td align="left">D72</td>
@@ -419,8 +421,20 @@ gse &lt;- gseGO(v,OrgDb = org.Mm.eg.db,pvalueCutoff = 0.05, nPerm=10000)</code><
 <pre><code>## GSEA analysis...</code></pre>
 <pre><code>## leading edge analysis...</code></pre>
 <pre><code>## done...</code></pre>
-<pre class="r"><code>gse@result[,-11] %&gt;% arrange(NES) %&gt;% kable </code></pre>
-<table>
+<pre class="r"><code>gse@result[,-11] %&gt;% arrange(NES) %&gt;% tablemd </code></pre>
+<table style="width:100%;">
+<colgroup>
+<col width="5%" />
+<col width="42%" />
+<col width="4%" />
+<col width="8%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="2%" />
+<col width="15%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">ID</th>
@@ -1387,11 +1401,11 @@ ddsn &lt;- getdds(&quot;data/countGENCODEvM9_3T3RNAseq.edit.txt&quot;,defn,~time
 <pre><code>## final dispersion estimates</code></pre>
 <pre><code>## fitting model and testing</code></pre>
 <pre class="r"><code>rldn &lt;- rlog(ddsn,blind=FALSE)
-knitr::kable(colData(ddsn))</code></pre>
+tablemd(colData(ddsn))</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">cond</th>
 <th align="left">time</th>
 <th align="left">rep</th>
@@ -1401,7 +1415,7 @@ knitr::kable(colData(ddsn))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>X3T3.WT.noinf</td>
+<td align="left">X3T3.WT.noinf</td>
 <td align="left">WT</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -1409,7 +1423,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.0082323</td>
 </tr>
 <tr class="even">
-<td>X3T3.WT.infect</td>
+<td align="left">X3T3.WT.infect</td>
 <td align="left">WT</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -1417,7 +1431,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.2420505</td>
 </tr>
 <tr class="odd">
-<td>X3T3.WT.inf24</td>
+<td align="left">X3T3.WT.inf24</td>
 <td align="left">WT</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -1425,7 +1439,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9808936</td>
 </tr>
 <tr class="even">
-<td>X3T3.WT.inf48</td>
+<td align="left">X3T3.WT.inf48</td>
 <td align="left">WT</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>
@@ -1433,7 +1447,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9110183</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v3.noinf</td>
+<td align="left">X3T3.H3v3.noinf</td>
 <td align="left">H3v3</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -1441,7 +1455,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1716920</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v3.infect</td>
+<td align="left">X3T3.H3v3.infect</td>
 <td align="left">H3v3</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -1449,7 +1463,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.0533892</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v3.inf24</td>
+<td align="left">X3T3.H3v3.inf24</td>
 <td align="left">H3v3</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -1457,7 +1471,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9724215</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v3.inf48</td>
+<td align="left">X3T3.H3v3.inf48</td>
 <td align="left">H3v3</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>
@@ -1465,7 +1479,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.8092273</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v7.noinf</td>
+<td align="left">X3T3.H3v7.noinf</td>
 <td align="left">H3v7</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -1473,7 +1487,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1884297</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v7.infect</td>
+<td align="left">X3T3.H3v7.infect</td>
 <td align="left">H3v7</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -1481,7 +1495,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1936027</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v7.inf24</td>
+<td align="left">X3T3.H3v7.inf24</td>
 <td align="left">H3v7</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -1489,7 +1503,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9042245</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v7.inf48</td>
+<td align="left">X3T3.H3v7.inf48</td>
 <td align="left">H3v7</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>
@@ -1535,8 +1549,19 @@ gsen &lt;- gseGO(v,ont = &quot;BP&quot;,OrgDb = org.Mm.eg.db,pvalueCutoff = 0.25
 <pre><code>## GSEA analysis...</code></pre>
 <pre><code>## leading edge analysis...</code></pre>
 <pre><code>## done...</code></pre>
-<pre class="r"><code>kable(gsen@result[,-c(1,11)] %&gt;% arrange(desc(enrichmentScore)))</code></pre>
+<pre class="r"><code>tablemd(gsen@result[,-c(1,11)] %&gt;% arrange(desc(enrichmentScore)))</code></pre>
 <table>
+<colgroup>
+<col width="30%" />
+<col width="5%" />
+<col width="10%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="3%" />
+<col width="20%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th align="left">Description</th>
@@ -1944,11 +1969,11 @@ ddsm &lt;- getdds(&quot;data/countGENCODEvM9_C2C12-mH2A1-2i_RNAseq.edit.txt&quot
 <pre><code>## final dispersion estimates</code></pre>
 <pre><code>## fitting model and testing</code></pre>
 <pre class="r"><code>rldm &lt;- rlog(ddsm,blind=FALSE)
-knitr::kable(colData(ddsm))</code></pre>
+tablemd(colData(ddsm))</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">cond</th>
 <th align="left">time</th>
 <th align="left">rep</th>
@@ -1958,7 +1983,7 @@ knitr::kable(colData(ddsm))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>SRR3000005</td>
+<td align="left">SRR3000005</td>
 <td align="left">CTL</td>
 <td align="left">MB</td>
 <td align="left">Rep1</td>
@@ -1966,7 +1991,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">1.2282098</td>
 </tr>
 <tr class="even">
-<td>SRR3000006</td>
+<td align="left">SRR3000006</td>
 <td align="left">CTL</td>
 <td align="left">MB</td>
 <td align="left">Rep2</td>
@@ -1974,7 +1999,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">1.1787304</td>
 </tr>
 <tr class="odd">
-<td>SRR3000007</td>
+<td align="left">SRR3000007</td>
 <td align="left">CTL</td>
 <td align="left">MB</td>
 <td align="left">Rep3</td>
@@ -1982,7 +2007,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">2.2332695</td>
 </tr>
 <tr class="even">
-<td>SRR3000008</td>
+<td align="left">SRR3000008</td>
 <td align="left">CTL</td>
 <td align="left">MT</td>
 <td align="left">Rep1</td>
@@ -1990,7 +2015,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.6890653</td>
 </tr>
 <tr class="odd">
-<td>SRR3000009</td>
+<td align="left">SRR3000009</td>
 <td align="left">CTL</td>
 <td align="left">MT</td>
 <td align="left">Rep2</td>
@@ -1998,7 +2023,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.6294310</td>
 </tr>
 <tr class="even">
-<td>SRR3000010</td>
+<td align="left">SRR3000010</td>
 <td align="left">CTL</td>
 <td align="left">MT</td>
 <td align="left">Rep3</td>
@@ -2006,7 +2031,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.5539811</td>
 </tr>
 <tr class="odd">
-<td>SRR3000011</td>
+<td align="left">SRR3000011</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MB</td>
 <td align="left">Rep1</td>
@@ -2014,7 +2039,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.9592084</td>
 </tr>
 <tr class="even">
-<td>SRR3000012</td>
+<td align="left">SRR3000012</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MB</td>
 <td align="left">Rep2</td>
@@ -2022,7 +2047,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">1.0371868</td>
 </tr>
 <tr class="odd">
-<td>SRR3000013</td>
+<td align="left">SRR3000013</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MB</td>
 <td align="left">Rep3</td>
@@ -2030,7 +2055,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">2.5351417</td>
 </tr>
 <tr class="even">
-<td>SRR3000014</td>
+<td align="left">SRR3000014</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MT</td>
 <td align="left">Rep1</td>
@@ -2038,7 +2063,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.9748941</td>
 </tr>
 <tr class="odd">
-<td>SRR3000015</td>
+<td align="left">SRR3000015</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MT</td>
 <td align="left">Rep2</td>
@@ -2046,7 +2071,7 @@ knitr::kable(colData(ddsm))</code></pre>
 <td align="right">0.7125510</td>
 </tr>
 <tr class="even">
-<td>SRR3000016</td>
+<td align="left">SRR3000016</td>
 <td align="left">mH2A1.2i</td>
 <td align="left">MT</td>
 <td align="left">Rep3</td>
@@ -2078,11 +2103,11 @@ ddsb &lt;- getdds(&quot;data/countGENCODEvM9_cartilage_BMAL1-KO_RNAseq.edit.txt&
 <pre><code>## final dispersion estimates</code></pre>
 <pre><code>## fitting model and testing</code></pre>
 <pre class="r"><code>rldb &lt;- rlog(ddsb,blind=FALSE)
-knitr::kable(colData(ddsb))</code></pre>
+tablemd(colData(ddsb))</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">cond</th>
 <th align="left">time</th>
 <th align="left">rep</th>
@@ -2092,7 +2117,7 @@ knitr::kable(colData(ddsb))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>ERR793472</td>
+<td align="left">ERR793472</td>
 <td align="left">WT</td>
 <td align="left">9AM</td>
 <td align="left">Rep3</td>
@@ -2100,7 +2125,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.1692521</td>
 </tr>
 <tr class="even">
-<td>ERR793473</td>
+<td align="left">ERR793473</td>
 <td align="left">KO</td>
 <td align="left">5PM</td>
 <td align="left">Rep3</td>
@@ -2108,7 +2133,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.1574875</td>
 </tr>
 <tr class="odd">
-<td>ERR793474</td>
+<td align="left">ERR793474</td>
 <td align="left">WT</td>
 <td align="left">9AM</td>
 <td align="left">Rep2</td>
@@ -2116,7 +2141,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.7839916</td>
 </tr>
 <tr class="even">
-<td>ERR793475</td>
+<td align="left">ERR793475</td>
 <td align="left">KO</td>
 <td align="left">5AM</td>
 <td align="left">Rep3</td>
@@ -2124,7 +2149,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.3333196</td>
 </tr>
 <tr class="odd">
-<td>ERR793476</td>
+<td align="left">ERR793476</td>
 <td align="left">KO</td>
 <td align="left">5AM</td>
 <td align="left">Rep2</td>
@@ -2132,7 +2157,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.8373409</td>
 </tr>
 <tr class="even">
-<td>ERR793477</td>
+<td align="left">ERR793477</td>
 <td align="left">WT</td>
 <td align="left">9PM</td>
 <td align="left">Rep2</td>
@@ -2140,7 +2165,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.8002306</td>
 </tr>
 <tr class="odd">
-<td>ERR793478</td>
+<td align="left">ERR793478</td>
 <td align="left">KO</td>
 <td align="left">9PM</td>
 <td align="left">Rep2</td>
@@ -2148,7 +2173,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.9357273</td>
 </tr>
 <tr class="even">
-<td>ERR793479</td>
+<td align="left">ERR793479</td>
 <td align="left">WT</td>
 <td align="left">5PM</td>
 <td align="left">Rep2</td>
@@ -2156,7 +2181,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.9701294</td>
 </tr>
 <tr class="odd">
-<td>ERR793480</td>
+<td align="left">ERR793480</td>
 <td align="left">KO</td>
 <td align="left">5PM</td>
 <td align="left">Rep2</td>
@@ -2164,7 +2189,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.6653467</td>
 </tr>
 <tr class="even">
-<td>ERR793481</td>
+<td align="left">ERR793481</td>
 <td align="left">WT</td>
 <td align="left">5AM</td>
 <td align="left">Rep2</td>
@@ -2172,7 +2197,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.1412059</td>
 </tr>
 <tr class="odd">
-<td>ERR793482</td>
+<td align="left">ERR793482</td>
 <td align="left">WT</td>
 <td align="left">5AM</td>
 <td align="left">Rep3</td>
@@ -2180,7 +2205,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.8747762</td>
 </tr>
 <tr class="even">
-<td>ERR793483</td>
+<td align="left">ERR793483</td>
 <td align="left">KO</td>
 <td align="left">9AM</td>
 <td align="left">Rep3</td>
@@ -2188,7 +2213,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.1050007</td>
 </tr>
 <tr class="odd">
-<td>ERR793484</td>
+<td align="left">ERR793484</td>
 <td align="left">WT</td>
 <td align="left">5PM</td>
 <td align="left">Rep3</td>
@@ -2196,7 +2221,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.0138664</td>
 </tr>
 <tr class="even">
-<td>ERR793485</td>
+<td align="left">ERR793485</td>
 <td align="left">KO</td>
 <td align="left">9AM</td>
 <td align="left">Rep2</td>
@@ -2204,7 +2229,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">1.0522057</td>
 </tr>
 <tr class="odd">
-<td>ERR793486</td>
+<td align="left">ERR793486</td>
 <td align="left">WT</td>
 <td align="left">9PM</td>
 <td align="left">Rep3</td>
@@ -2212,7 +2237,7 @@ knitr::kable(colData(ddsb))</code></pre>
 <td align="right">0.7389949</td>
 </tr>
 <tr class="even">
-<td>ERR793487</td>
+<td align="left">ERR793487</td>
 <td align="left">KO</td>
 <td align="left">9PM</td>
 <td align="left">Rep3</td>

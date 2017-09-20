@@ -43,6 +43,8 @@ labelQ <- function(x,n=20) {
       labels = round(qt*100)[-1]
   )
 }
+
+tablemd <- function(x,...) knitr::kable(x,format="markdown",...)
 ```
 
 ```{r load_EnsGene, cache=TRUE}
@@ -136,7 +138,7 @@ NIH3T3 H3vOE
 defn <- getdef("data/table_3T3RNAseq.txt")
 ddsn <- getdds("data/countGENCODEvM9_3T3RNAseq.edit.txt",defn,~time+cond)
 rldn <- rlog(ddsn,blind=FALSE)
-knitr::kable(colData(ddsn))
+tablemd(colData(ddsn))
 ```
 
 ```{r resultsNIH3T3Sel}

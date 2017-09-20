@@ -49,6 +49,8 @@ tlab <- function(res,alpha=0.1,thresh=0)
 
 degLabs <- function(dds,contrast,alpha=0.1,thresh=100)
   dds %>% results(contrast=contrast) %>% tlab(alpha,thresh)
+
+tablemd <- function(x,...) knitr::kable(x,format="markdown",...)
 ```
 
 ### Load bioMart annotation
@@ -69,7 +71,7 @@ H3mm7KO in C2C12
 defko <- getdef("data/table_C2C12RNAseq.txt")
 ddsko <- getdds("data/countGENCODEvM9_C2C12RNAseq.edit.txt",defko,~time+cond)
 rldko <- rlog(ddsko,blind=FALSE)
-knitr::kable(colData(ddsko))
+tablemd(colData(ddsko))
 ```
 
 ```{r results_H3mm7KO}
@@ -105,7 +107,7 @@ gsks <- bitr(tblks$ens_gene,fromType = "ENSEMBL",toType = "ENTREZID",org.Mm.eg.d
 v <- gsks$log2FoldChange
 names(v) <- gsks$ENTREZID
 gse <- gseGO(v,OrgDb = org.Mm.eg.db,pvalueCutoff = 0.05, nPerm=10000)
-gse@result[,-11] %>% arrange(NES) %>% kable 
+gse@result[,-11] %>% arrange(NES) %>% tablemd 
 ```
 
 
@@ -117,7 +119,7 @@ NIH3T3 H3vOE
 defn <- getdef("data/table_3T3RNAseq.txt")
 ddsn <- getdds("data/countGENCODEvM9_3T3RNAseq.edit.txt",defn,~time+cond)
 rldn <- rlog(ddsn,blind=FALSE)
-knitr::kable(colData(ddsn))
+tablemd(colData(ddsn))
 ```
 
 ```{r results_NIH3T3}
@@ -152,7 +154,7 @@ gsksn <- bitr(tblns$ens_gene,fromType = "ENSEMBL",toType = "ENTREZID",org.Mm.eg.
 
 v <- with(gsksn,setNames(log2FoldChange,ens_gene)) %>% sort(decreasing=TRUE)
 gsen <- gseGO(v,ont = "BP",OrgDb = org.Mm.eg.db,pvalueCutoff = 0.25,nPerm=10000,keytype = "ENSEMBL")
-kable(gsen@result[,-c(1,11)] %>% arrange(desc(enrichmentScore)))
+tablemd(gsen@result[,-c(1,11)] %>% arrange(desc(enrichmentScore)))
 ```
 
 
@@ -166,7 +168,7 @@ si-mH2A.1 in C2C12
 defm <- getdef("data/table_mH2A1-2i.txt")
 ddsm <- getdds("data/countGENCODEvM9_C2C12-mH2A1-2i_RNAseq.edit.txt",defm,~time*cond,~time+cond)
 rldm <- rlog(ddsm,blind=FALSE)
-knitr::kable(colData(ddsm))
+tablemd(colData(ddsm))
 ```
 
 ```{r results_siMacroH2A1}
@@ -187,7 +189,7 @@ defb$cond <- factor(defb$cond,c("WT","KO"))
 defb$time <- factor(defb$time,c("5AM","9AM","5PM","9PM"))
 ddsb <- getdds("data/countGENCODEvM9_cartilage_BMAL1-KO_RNAseq.edit.txt",defb,~time*cond,~time+cond)
 rldb <- rlog(ddsb,blind=FALSE)
-knitr::kable(colData(ddsb))
+tablemd(colData(ddsb))
 ```
 
 ```{r results_BMAL1KO}

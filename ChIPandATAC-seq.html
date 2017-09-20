@@ -191,7 +191,9 @@ labelQ &lt;- function(x,n=20) {
       breaks = quantile(x,qt),
       labels = round(qt*100)[-1]
   )
-}</code></pre>
+}
+
+tablemd &lt;- function(x,...) knitr::kable(x,format=&quot;markdown&quot;,...)</code></pre>
 <pre class="r"><code>ensembl &lt;- useMart(&quot;ENSEMBL_MART_ENSEMBL&quot;,host=&quot;asia.ensembl.org&quot;)
 mart &lt;- useDataset(&quot;mmusculus_gene_ensembl&quot;,mart=ensembl)
 e2g &lt;- getBM(attributes = c(&quot;ensembl_gene_id&quot;,&quot;external_gene_name&quot;,&quot;gene_biotype&quot;), mart = mart)
@@ -283,11 +285,11 @@ ddsn &lt;- getdds(&quot;data/countGENCODEvM9_3T3RNAseq.edit.txt&quot;,defn,~time
 <pre><code>## final dispersion estimates</code></pre>
 <pre><code>## fitting model and testing</code></pre>
 <pre class="r"><code>rldn &lt;- rlog(ddsn,blind=FALSE)
-knitr::kable(colData(ddsn))</code></pre>
+tablemd(colData(ddsn))</code></pre>
 <table>
 <thead>
 <tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">cond</th>
 <th align="left">time</th>
 <th align="left">rep</th>
@@ -297,7 +299,7 @@ knitr::kable(colData(ddsn))</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td>X3T3.WT.noinf</td>
+<td align="left">X3T3.WT.noinf</td>
 <td align="left">WT</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -305,7 +307,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.0082323</td>
 </tr>
 <tr class="even">
-<td>X3T3.WT.infect</td>
+<td align="left">X3T3.WT.infect</td>
 <td align="left">WT</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -313,7 +315,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.2420505</td>
 </tr>
 <tr class="odd">
-<td>X3T3.WT.inf24</td>
+<td align="left">X3T3.WT.inf24</td>
 <td align="left">WT</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -321,7 +323,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9808936</td>
 </tr>
 <tr class="even">
-<td>X3T3.WT.inf48</td>
+<td align="left">X3T3.WT.inf48</td>
 <td align="left">WT</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>
@@ -329,7 +331,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9110183</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v3.noinf</td>
+<td align="left">X3T3.H3v3.noinf</td>
 <td align="left">H3v3</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -337,7 +339,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1716920</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v3.infect</td>
+<td align="left">X3T3.H3v3.infect</td>
 <td align="left">H3v3</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -345,7 +347,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.0533892</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v3.inf24</td>
+<td align="left">X3T3.H3v3.inf24</td>
 <td align="left">H3v3</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -353,7 +355,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9724215</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v3.inf48</td>
+<td align="left">X3T3.H3v3.inf48</td>
 <td align="left">H3v3</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>
@@ -361,7 +363,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.8092273</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v7.noinf</td>
+<td align="left">X3T3.H3v7.noinf</td>
 <td align="left">H3v7</td>
 <td align="left">noinf</td>
 <td align="left">Rep1</td>
@@ -369,7 +371,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1884297</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v7.infect</td>
+<td align="left">X3T3.H3v7.infect</td>
 <td align="left">H3v7</td>
 <td align="left">infect</td>
 <td align="left">Rep1</td>
@@ -377,7 +379,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">1.1936027</td>
 </tr>
 <tr class="odd">
-<td>X3T3.H3v7.inf24</td>
+<td align="left">X3T3.H3v7.inf24</td>
 <td align="left">H3v7</td>
 <td align="left">inf24</td>
 <td align="left">Rep1</td>
@@ -385,7 +387,7 @@ knitr::kable(colData(ddsn))</code></pre>
 <td align="right">0.9042245</td>
 </tr>
 <tr class="even">
-<td>X3T3.H3v7.inf48</td>
+<td align="left">X3T3.H3v7.inf48</td>
 <td align="left">H3v7</td>
 <td align="left">inf48</td>
 <td align="left">Rep1</td>

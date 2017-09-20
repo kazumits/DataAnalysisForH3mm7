@@ -85,6 +85,8 @@ labelQ <- function(x,n=20) {
       labels = round(qt*100)[-1]
   )
 }
+
+tablemd <- function(x,...) knitr::kable(x,format="markdown",...)
 ```
 
 
@@ -264,23 +266,25 @@ ddsn <- getdds("data/countGENCODEvM9_3T3RNAseq.edit.txt",defn,~time+cond)
 
 ```r
 rldn <- rlog(ddsn,blind=FALSE)
-knitr::kable(colData(ddsn))
+tablemd(colData(ddsn))
 ```
 
-                   cond   time     rep    clone        sizeFactor
------------------  -----  -------  -----  ----------  -----------
-X3T3.WT.noinf      WT     noinf    Rep1   WT_Rep1       1.0082323
-X3T3.WT.infect     WT     infect   Rep1   WT_Rep1       1.2420505
-X3T3.WT.inf24      WT     inf24    Rep1   WT_Rep1       0.9808936
-X3T3.WT.inf48      WT     inf48    Rep1   WT_Rep1       0.9110183
-X3T3.H3v3.noinf    H3v3   noinf    Rep1   H3v3_Rep1     1.1716920
-X3T3.H3v3.infect   H3v3   infect   Rep1   H3v3_Rep1     1.0533892
-X3T3.H3v3.inf24    H3v3   inf24    Rep1   H3v3_Rep1     0.9724215
-X3T3.H3v3.inf48    H3v3   inf48    Rep1   H3v3_Rep1     0.8092273
-X3T3.H3v7.noinf    H3v7   noinf    Rep1   H3v7_Rep1     1.1884297
-X3T3.H3v7.infect   H3v7   infect   Rep1   H3v7_Rep1     1.1936027
-X3T3.H3v7.inf24    H3v7   inf24    Rep1   H3v7_Rep1     0.9042245
-X3T3.H3v7.inf48    H3v7   inf48    Rep1   H3v7_Rep1     0.8198526
+
+
+|                 |cond |time   |rep  |clone     | sizeFactor|
+|:----------------|:----|:------|:----|:---------|----------:|
+|X3T3.WT.noinf    |WT   |noinf  |Rep1 |WT_Rep1   |  1.0082323|
+|X3T3.WT.infect   |WT   |infect |Rep1 |WT_Rep1   |  1.2420505|
+|X3T3.WT.inf24    |WT   |inf24  |Rep1 |WT_Rep1   |  0.9808936|
+|X3T3.WT.inf48    |WT   |inf48  |Rep1 |WT_Rep1   |  0.9110183|
+|X3T3.H3v3.noinf  |H3v3 |noinf  |Rep1 |H3v3_Rep1 |  1.1716920|
+|X3T3.H3v3.infect |H3v3 |infect |Rep1 |H3v3_Rep1 |  1.0533892|
+|X3T3.H3v3.inf24  |H3v3 |inf24  |Rep1 |H3v3_Rep1 |  0.9724215|
+|X3T3.H3v3.inf48  |H3v3 |inf48  |Rep1 |H3v3_Rep1 |  0.8092273|
+|X3T3.H3v7.noinf  |H3v7 |noinf  |Rep1 |H3v7_Rep1 |  1.1884297|
+|X3T3.H3v7.infect |H3v7 |infect |Rep1 |H3v7_Rep1 |  1.1936027|
+|X3T3.H3v7.inf24  |H3v7 |inf24  |Rep1 |H3v7_Rep1 |  0.9042245|
+|X3T3.H3v7.inf48  |H3v7 |inf48  |Rep1 |H3v7_Rep1 |  0.8198526|
 
 
 ```r
